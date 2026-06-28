@@ -1,0 +1,25 @@
+name: 'Foundry Package Release'
+description: 'Publish Foundry VTT packages via the Foundry API'
+author: 'neovatar'
+
+inputs:
+  name:
+    description: 'Name to greet'
+    required: true
+    default: 'World'
+  greeting:
+    description: 'Greeting to use'
+    required: false
+    default: 'Hello'
+
+outputs:
+  message:
+    description: 'The message produced by the action'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+
+branding:
+  icon: 'upload-cloud'
+  color: 'purple'
