@@ -3,9 +3,11 @@ name: Publish Docker image
 on:
   push:
     branches: [main]
-    tags: ['v*.*.*']
+    tags: ["v*.*.*"]
+    paths-ignore: ["README.md"]
   pull_request:
     branches: [main]
+    paths-ignore: ["README.md"]
   workflow_dispatch:
 
 env:
@@ -43,13 +45,12 @@ jobs:
             type=ref,event=branch
             type=semver,pattern={{version}}
             type=raw,value=latest,enable={{is_default_branch}}
-            type=sha
 
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
+          push: ${{ github.event_name != 'pull_request' && github.ref_type == 'tag' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
