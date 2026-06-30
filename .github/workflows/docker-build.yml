@@ -20,8 +20,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    outputs:
-      digest: ${{ steps.push.outputs.digest }}
 
     steps:
       - name: Checkout
@@ -49,7 +47,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push
-        id: push
+        id: build
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
         with:
           context: .
@@ -59,32 +57,20 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  update-action-ref:
-    needs: build
-    if: github.ref_type == 'tag'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout main
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          ref: main
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Pin image digest in action.yml
+        if: github.event_name != 'pull_request' && github.ref_type == 'tag'
         run: |
-          DIGEST="${{ needs.build.outputs.digest }}"
+          DIGEST="${{ steps.build.outputs.digest }}"
           IMAGE="docker://ghcr.io/${IMAGE_NAME}@${DIGEST}"
           sed -i "s|image: 'docker://ghcr.io/[^']*'|image: '${IMAGE}'|" action.yml
 
       - name: Commit and push
+        if: github.event_name != 'pull_request' && github.ref_type == 'tag'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if ! git diff --quiet action.yml; then
             git add action.yml
-            git commit -m "build: pin action image to ${{ needs.build.outputs.digest }} [skip ci]"
+            git commit -m "ci: pin action image to ${{ steps.build.outputs.digest }} [skip ci]"
             git push
           fi
