@@ -18,7 +18,7 @@ outputs:
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/neovatar/foundry-package-release:latest'
+  image: 'docker://ghcr.io/neovatar/foundry-package-release@sha256:e7df4a8c10698235263705ab95c43a0b8c8cddbdf5b3c4f732644bf4c2c52486'
 
 branding:
   icon: 'upload-cloud'
