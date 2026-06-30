@@ -3,7 +3,6 @@ name: Build Docker image
 on:
   push:
     branches: [main]
-    tags: ["v*.*.*"]
     paths-ignore: ["README.md", ".github/dependabot.yml"]
   pull_request:
     branches: [main]
@@ -16,7 +15,6 @@ env:
 
 jobs:
   build:
-    name: Build and push Docker image
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -25,6 +23,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Determine version
+        id: version
+        run: |
+          VERSION="v$(date +'%Y%m%d%H%M%S')"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
@@ -43,35 +49,32 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
             type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=${{ steps.version.outputs.version }}
 
       - name: Build and push
-        id: build
+        id: docker_build
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' && github.ref_type == 'tag' }}
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Pin image digest in action.yml
-        if: github.event_name != 'pull_request' && github.ref_type == 'tag'
         run: |
-          DIGEST="${{ steps.build.outputs.digest }}"
+          DIGEST="${{ steps.docker_build.outputs.digest }}"
           IMAGE="docker://ghcr.io/${IMAGE_NAME}@${DIGEST}"
           sed -i "s|image: 'docker://ghcr.io/[^']*'|image: '${IMAGE}'|" action.yml
 
       - name: Commit and push
-        if: github.event_name != 'pull_request' && github.ref_type == 'tag'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if ! git diff --quiet action.yml; then
             git add action.yml
-            git commit -m "ci: pin action image to ${{ steps.build.outputs.digest }} [skip ci]"
+            git commit -m "ci: pin action image to ${{ steps.docker_build.outputs.digest }} [skip ci]"
             git push
           fi
