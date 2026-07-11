@@ -64,14 +64,14 @@ jobs:
         run: |
           DIGEST="${{ steps.docker_build.outputs.digest }}"
           IMAGE="docker://ghcr.io/${IMAGE_NAME}@${DIGEST}"
-          sed -i "s|image: 'docker://ghcr.io/[^']*'|image: '${IMAGE}'|" action.yml
+          sed -i "s|image: 'docker://ghcr.io/[^']*'|image: '${IMAGE}'|" action.yaml
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if ! git diff --quiet action.yml; then
-            git add action.yml
+            git add action.yaml
             git commit -m "ci: pin action image to ${{ steps.docker_build.outputs.digest }} [skip ci]"
             git push
           fi
