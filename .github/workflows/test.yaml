@@ -1,0 +1,30 @@
+name: Test action.yaml
+
+on:
+  push:
+    branches: [main]
+    paths: ["action.yaml"]
+
+jobs:
+  test:
+    name: Run action with test inputs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Run action
+        id: run-action
+        uses: ./
+        with:
+          name: 'Test'
+          greeting: 'Howdy'
+
+      - name: Verify output
+        run: |
+          if [ -z "${{ steps.run-action.outputs.message }}" ]; then
+            echo "::error::Action did not produce a message output"
+            exit 1
+          fi
+          echo "Message: ${{ steps.run-action.outputs.message }}"
