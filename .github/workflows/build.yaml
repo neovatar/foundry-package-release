@@ -50,3 +50,18 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Run action
+        id: run-action
+        uses: ./
+        with:
+          name: "Test"
+          greeting: "Howdy"
+
+      - name: Verify output
+        run: |
+          if [ -z "${{ steps.run-action.outputs.message }}" ]; then
+            echo "::error::Action did not produce a message output"
+            exit 1
+          fi
+          echo "Message: ${{ steps.run-action.outputs.message }}"
