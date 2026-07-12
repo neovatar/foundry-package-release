@@ -3,6 +3,9 @@ description: 'Publish Foundry VTT packages via the Foundry API'
 author: 'neovatar'
 
 inputs:
+  token:
+    description: 'Package Release Token, from the package page on foundryvtt.com'
+    required: true
   id:
     description: 'The package ID, as found in its manifest'
     required: true

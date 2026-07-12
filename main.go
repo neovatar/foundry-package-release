@@ -60,9 +60,9 @@ func main() {
 }
 
 func run(action *githubactions.Action, client *http.Client, apiURL string) error {
-	token := action.Getenv("FVTTP_TOKEN")
+	token := action.GetInput("token")
 	if token == "" {
-		return errors.New("missing environment variable 'FVTTP_TOKEN'")
+		return errors.New("missing input 'token'")
 	}
 
 	id := action.GetInput("id")

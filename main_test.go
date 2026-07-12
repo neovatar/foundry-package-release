@@ -41,7 +41,7 @@ func newTestAction(t *testing.T, env map[string]string) (action *githubactions.A
 
 func validInputs() map[string]string {
 	return map[string]string{
-		"FVTTP_TOKEN":           "fvttp_test-token",
+		"INPUT_TOKEN":           "fvttp_test-token",
 		"INPUT_ID":              "example-module",
 		"INPUT_VERSION":         "1.0.0",
 		"INPUT_MANIFEST":        "https://example.com/releases/1.0.0/module.json",
@@ -183,7 +183,7 @@ func TestRun_MissingInputs(t *testing.T) {
 		removeKey   string
 		wantErrText string
 	}{
-		{"missing token", "FVTTP_TOKEN", "FVTTP_TOKEN"},
+		{"missing token", "INPUT_TOKEN", "token"},
 		{"missing id", "INPUT_ID", "id"},
 		{"missing version", "INPUT_VERSION", "version"},
 		{"missing manifest", "INPUT_MANIFEST", "manifest"},

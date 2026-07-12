@@ -8,9 +8,8 @@ GitHub Action that publishes a Foundry VTT package release via the
 ```yaml
 - name: Publish release
   uses: neovatar/foundry-package-release@v1
-  env:
-    FVTTP_TOKEN: ${{ secrets.FVTTP_TOKEN }}
   with:
+    token: ${{ secrets.FVTTP_TOKEN }}
     id: example-module
     version: 1.0.0
     manifest: https://example.com/releases/1.0.0/module.json
@@ -21,14 +20,11 @@ GitHub Action that publishes a Foundry VTT package release via the
     dry_run: 'false'
 ```
 
-`FVTTP_TOKEN` (the package's Release Token, from its page on the Foundry
-website) is read from the environment, not from `with:` — it must be
-passed as `env`, not an input.
-
 ## Inputs
 
 | Name              | Required | Description                                                        |
 |-------------------|----------|----------------------------------------------------------------------|
+| `token`           | Yes      | Package Release Token, from the package page on foundryvtt.com       |
 | `id`              | Yes      | The package ID, as found in its manifest                             |
 | `version`         | Yes      | The semantic version of this release (e.g. `1.0.0`)                  |
 | `manifest`        | Yes      | URL to the manifest for this specific release (not the latest/rolling manifest) |
@@ -56,12 +52,12 @@ go test ./...
 ```
 
 To exercise the real binary against the live API, set the same
-`INPUT_*`/`GITHUB_OUTPUT`/`FVTTP_TOKEN` environment variables GitHub Actions
-would set, then run it directly:
+`INPUT_*`/`GITHUB_OUTPUT` environment variables GitHub Actions would set,
+then run it directly:
 
 ```sh
-FVTTP_TOKEN=fvttp_xxx \
 GITHUB_OUTPUT=/tmp/gh-output \
+INPUT_TOKEN=fvttp_xxx \
 INPUT_ID=example-module \
 INPUT_VERSION=1.0.0 \
 INPUT_MANIFEST=https://example.com/releases/1.0.0/module.json \
