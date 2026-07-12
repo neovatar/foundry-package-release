@@ -3,18 +3,39 @@ description: 'Publish Foundry VTT packages via the Foundry API'
 author: 'neovatar'
 
 inputs:
-  name:
-    description: 'Name to greet'
+  id:
+    description: 'The package ID, as found in its manifest'
     required: true
-    default: 'World'
-  greeting:
-    description: 'Greeting to use'
+  version:
+    description: 'The semantic version of this release (e.g. "1.0.0")'
+    required: true
+  manifest:
+    description: 'URL to the manifest for this specific release (not the latest/rolling manifest)'
+    required: true
+  notes:
+    description: 'URL to the release notes for this release'
     required: false
-    default: 'Hello'
+  compat_min:
+    description: 'Minimum Foundry VTT version this release is compatible with'
+    required: true
+  compat_verified:
+    description: 'Most recent Foundry VTT version this release has been verified against'
+    required: true
+  compat_max:
+    description: 'Foundry VTT version at which this release is no longer compatible'
+    required: false
+  dry_run:
+    description: 'Validate the release without publishing it'
+    required: false
+    default: 'true'
 
 outputs:
+  status:
+    description: 'The status returned by the Foundry package release API ("success" or "error")'
+  page:
+    description: 'URL of the package edit page returned by the API'
   message:
-    description: 'The message produced by the action'
+    description: 'Message returned by the API (populated on dry runs)'
 
 runs:
   using: 'docker'

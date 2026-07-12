@@ -77,18 +77,3 @@ jobs:
           fi
           git tag -f ${{ steps.version.outputs.version }}
           git push -f origin ${{ steps.version.outputs.version }}
-
-      - name: Test action
-        id: test-action
-        uses: ./
-        with:
-          name: "Test"
-          greeting: "Howdy"
-
-      - name: Verify output
-        run: |
-          if [ -z "${{ steps.test-action.outputs.message }}" ]; then
-            echo "::error::Action did not produce a message output"
-            exit 1
-          fi
-          echo "Message: ${{ steps.test-action.outputs.message }}"
