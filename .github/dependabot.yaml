@@ -9,6 +9,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7 # Wait 1 week before opening version-update PRs; security updates ignore cooldown
     groups:
       gomod-dependencies:
         patterns:
@@ -20,6 +22,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7 # Wait 1 week before opening version-update PRs; security updates ignore cooldown
     groups:
       github-actions-dependencies:
         patterns:
@@ -27,4 +31,3 @@ updates:
         update-types:
           - "minor"
           - "patch"
-
