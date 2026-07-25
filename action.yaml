@@ -42,7 +42,7 @@ outputs:
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/neovatar/foundry-package-release@sha256:b501cdc8a0f0a5db543d1a4389fd02243a880f9593c0c1389405a9c7571d5103'
+  image: 'docker://ghcr.io/neovatar/foundry-package-release@sha256:2146fafb00d6f2ce5fa658b6f6e2874051376871b9896fe71f32cad3b5b991d6'
 
 branding:
   icon: 'upload-cloud'
